@@ -5,7 +5,7 @@ Function New-Link {
 		[string]$Type,
 
 		[Parameter(Mandatory=$TRUE, Position=1)]
-		[ValidateScript({Test-Path $_})]
+		[ValidateScript({Test-Path "$_"})]
 		[string]$Source,
 
 		[Parameter(Mandatory=$TRUE, Position=2)]
