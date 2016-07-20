@@ -5,20 +5,22 @@ Function New-Link {
 		[string]$Type,
 
 		[Parameter(Mandatory=$TRUE, Position=1)]
-		[string]$link,
+		[ValidateScript({Test-Path $_})]
+		[string]$target,
 
 		[Parameter(Mandatory=$TRUE, Position=2)]
-		[ValidateScript({Test-Path $_})]
-		[string]$target
+		[string]$link
 	)
 
-	# Run `mklink /d` if $target is a directory
-	if (Test-Path -pathtype container $target) {
-		$command = "mklink /d"
+	if ($Type -eq 'Shortcut') {
+		# PoSH has no shortcut support, so we must use com objects
+		$WshShell = New-Object -comObject WScript.Shell
+		$Shortcut = $WshShell.CreateShortcut("$link")
+		$Shortcut.TargetPath = "$target"
+		$Shortcut.Save()
 	} else {
-		$command = "mklink"
+		# Starting 5.0, PoSH supports symlinks
+		New-Item -Path "$link" -ItemType $Type -Value "$target"
 	}
-
-	cmd /c "$command $link $target"
 }
 New-Alias mklink New-Link
