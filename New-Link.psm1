@@ -1,9 +1,13 @@
 Function New-Link {
 	Param (
-		[Parameter(Mandatory=$TRUE,Position=0)]
+		[Parameter(Mandatory=$TRUE, Position=0)]
+		[ValidateSet('SymbolicLink', 'Junction', 'HardLink', 'Shortcut')]
+		[string]$Type,
+
+		[Parameter(Mandatory=$TRUE, Position=1)]
 		[string]$link,
 
-		[Parameter(Mandatory=$TRUE,Position=1)]
+		[Parameter(Mandatory=$TRUE, Position=2)]
 		[ValidateScript({Test-Path $_})]
 		[string]$target
 	)
