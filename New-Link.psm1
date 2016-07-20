@@ -6,21 +6,21 @@ Function New-Link {
 
 		[Parameter(Mandatory=$TRUE, Position=1)]
 		[ValidateScript({Test-Path $_})]
-		[string]$target,
+		[string]$Source,
 
 		[Parameter(Mandatory=$TRUE, Position=2)]
-		[string]$link
+		[string]$LinkName
 	)
 
 	if ($Type -eq 'Shortcut') {
 		# PoSH has no shortcut support, so we must use com objects
 		$WshShell = New-Object -comObject WScript.Shell
-		$Shortcut = $WshShell.CreateShortcut("$link")
-		$Shortcut.TargetPath = "$target"
+		$Shortcut = $WshShell.CreateShortcut("$LinkName")
+		$Shortcut.TargetPath = "$Source"
 		$Shortcut.Save()
 	} else {
 		# Starting 5.0, PoSH supports symlinks
-		New-Item -Path "$link" -ItemType $Type -Value "$target"
+		New-Item -Path "$LinkName" -ItemType $Type -Value "$Source"
 	}
 }
 New-Alias mklink New-Link
