@@ -13,13 +13,13 @@ Function New-Link {
 	)
 
 	if ($Type -eq 'Shortcut') {
-		# PoSH has no shortcut support, so we must use com objects
+		# PoSH has no native shortcut support, so use a COM object
 		$WshShell = New-Object -comObject WScript.Shell
 		$Shortcut = $WshShell.CreateShortcut("$LinkName")
 		$Shortcut.TargetPath = "$Source"
 		$Shortcut.Save()
 	} else {
-		# Starting 5.0, PoSH supports symlinks
+		# Starting with version 5.0, PoSH has native symlink support
 		New-Item -Path "$LinkName" -ItemType $Type -Value "$Source"
 	}
 }
