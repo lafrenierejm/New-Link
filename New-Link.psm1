@@ -24,3 +24,6 @@ Function New-Link {
 	}
 }
 New-Alias mklink New-Link
+
+Export-ModuleMember -function New-Link
+Export-ModuleMember -alias mklink
