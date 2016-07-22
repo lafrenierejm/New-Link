@@ -1,36 +1,36 @@
 Function New-Link {
-	[CmdletBinding(
-		SupportsShouldProcess = $TRUE
-	)]
-	Param (
-		[Parameter(Mandatory=$TRUE, Position=0)]
-		[ValidateSet('SymbolicLink', 'Junction', 'HardLink', 'Shortcut')]
-		[string]$Type,
+    [CmdletBinding(
+        SupportsShouldProcess = $TRUE
+    )]
+    param (
+        [Parameter(Mandatory=$TRUE, Position=0)]
+        [ValidateSet('SymbolicLink', 'Junction', 'HardLink', 'Shortcut')]
+        [string]$Type,
 
-		[Parameter(Mandatory=$TRUE, Position=1)]
-		[ValidateScript({Test-Path "$_"})]
-		[string]$Source,
+        [Parameter(Mandatory=$TRUE, Position=1)]
+        [ValidateScript({Test-Path "$_"})]
+        [string]$Source,
 
-		[Parameter(Mandatory=$TRUE, Position=2)]
-		[string]$LinkPath
-	)
+        [Parameter(Mandatory=$TRUE, Position=2)]
+        [string]$LinkPath
+    )
 
-	process {
-		if ($Type -eq 'Shortcut') {
-			if ($PSCmdlet.ShouldProcess($LinkPath, 'Create Shortcut')) {
-				# PowerShell has no native shortcut support, so use a COM object
-				$WshShell = New-Object -comObject WScript.Shell
-				$Shortcut = $WshShell.CreateShortcut("$LinkPath")
-				$Shortcut.TargetPath = "$Source"
-				$Shortcut.Save()
-			}
-		} else {
-			if ($PSCmdlet.ShouldProcess($LinkPath, 'Create Link')) {
-				# Starting with version 5.0, PoSH has native symlink support
-				New-Item -Path "$LinkPath" -ItemType $Type -Value "$Source"
-			}
-		}
-	}
+    process {
+        if ($Type -eq 'Shortcut') {
+            if ($PSCmdlet.ShouldProcess($LinkPath, 'Create Shortcut')) {
+# PowerShell has no native shortcut support, so use a COM object
+                $WshShell = New-Object -comObject WScript.Shell
+                    $Shortcut = $WshShell.CreateShortcut("$LinkPath")
+                    $Shortcut.TargetPath = "$Source"
+                    $Shortcut.Save()
+            }
+        } else {
+            if ($PSCmdlet.ShouldProcess($LinkPath, 'Create Link')) {
+# Starting with version 5.0, PoSH has native symlink support
+                New-Item -Path "$LinkPath" -ItemType $Type -Value "$Source"
+            }
+        }
+    }
 }
 New-Alias mklink New-Link
 
