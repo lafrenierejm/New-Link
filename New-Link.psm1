@@ -10,9 +10,9 @@ function New-Link {
         The type of link to create
 
     .PARAMETER Source
-        The item which the created link will point to
+        The path of the item to which the created link will point
 
-    .PARAMETER LinkPath
+    .PARAMETER Link
         The path of the link to create
 
     .OUTPUTS
@@ -39,22 +39,28 @@ function New-Link {
         [string]$Source,
 
         [Parameter(Mandatory=$TRUE, Position=2)]
-        [string]$LinkPath
+        [string]$Link
     )
 
     process {
         # PowerShell has no native shortcut support, so those are handled with COM objects
         if ($Type -eq 'Shortcut') {
-            if ($PSCmdlet.ShouldProcess($LinkPath, 'Create Shortcut')) {
+            if ($PSCmdlet.ShouldProcess($Link, 'Create Shortcut')) {
+                # Get the full path of $Source
+                $SourcePathInfo = Resolve-Path -Path "$Source"
+                $SourceFullPath = $(Get-Item -Path "$SourcePathInfo").FullName
+                Write-Debug "The full path to the source is `"$SourceFullPath`""
+
+                # Create the shortcut to $SourceFullPath
                 $WshShell = New-Object -comObject WScript.Shell
-                $Shortcut = $WshShell.CreateShortcut("$LinkPath")
-                $Shortcut.TargetPath = "$Source"
+                $Shortcut = $WshShell.CreateShortcut("$Link")
+                $Shortcut.TargetPath = "$SourceFullPath"
                 $Shortcut.Save()
             }
         } else {
-            if ($PSCmdlet.ShouldProcess($LinkPath, 'Create Link')) {
+            if ($PSCmdlet.ShouldProcess($Link, 'Create Link')) {
                 # Starting with version 5.0, PoSH has native symlink support
-                New-Item -Path "$LinkPath" -ItemType $Type -Value "$Source"
+                New-Item -Path "$Link" -ItemType $Type -Value "$Source"
             }
         }
     }
