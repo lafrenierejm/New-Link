@@ -45,6 +45,10 @@ function New-Link {
     process {
         # PowerShell has no native shortcut support, so those are handled with COM objects
         if ($Type -eq 'Shortcut') {
+            # A shortcut's extensions must be either '.lnk' or '.url'
+            if ((-not ("$Link".EndsWith('.lnk'))) -and (-not ("$Link".EndsWith('.url')))) {
+                throw "The shortcut pathname must end with '.lnk' or '.url'."
+            }
             if ($PSCmdlet.ShouldProcess($Link, 'Create Shortcut')) {
                 # Get the full path of $Source
                 $SourcePathInfo = Resolve-Path -Path "$Source"
