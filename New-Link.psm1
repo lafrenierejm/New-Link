@@ -42,6 +42,17 @@ function New-Link {
         [string]$Destination
     )
 
+    begin {
+        # If no $Destination was provided
+        # Set $Destination to the name of $Source in the current directory
+        if (-not $Destination) {
+            $CurrentDirectory = $(Get-Location).Path
+            $SourceItem = Get-Item -Path "$Source"
+            $SourceName = $SourceItem.Name
+            $Destination = "$CurrentDirectory\$SourceName"
+        }
+    }
+
     process {
         # PowerShell has no native shortcut support, so those are handled with COM objects
         if ($Type -eq 'Shortcut') {
