@@ -12,8 +12,8 @@ function New-Link {
     .PARAMETER Source
         The path of the item to which the created link will point
 
-    .PARAMETER Link
-        The path of the link to create
+    .PARAMETER Destination
+        The path at which to create the link object
 
     .OUTPUTS
         Either a new WScript.Shell object if the specified type is 'Shortcut' or a new item of the specified type.
