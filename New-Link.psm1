@@ -51,6 +51,13 @@ function New-Link {
             $SourceName = $SourceItem.Name
             $Destination = "$CurrentDirectory\$SourceName"
         }
+        # If $Destination is an existing directory
+        # Set $Destination to the name of $Source inside the specified directory
+        elseif (Test-Path -Path "$Destination" -PathType Container) {
+            $SourceItem = Get-Item -Path "$Source"
+            $SourceName = $SourceItem.Name
+            $Destination = "$Destination\$SourceName"
+        }
     }
 
     process {
