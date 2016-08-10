@@ -38,18 +38,18 @@ function New-Link {
         [ValidateScript({Test-Path "$_"})]
         [string]$Source,
 
-        [Parameter(Mandatory=$TRUE, Position=2)]
-        [string]$Link
+        [Parameter(Mandatory=$FALSE, Position=2)]
+        [string]$Destination
     )
 
     process {
         # PowerShell has no native shortcut support, so those are handled with COM objects
         if ($Type -eq 'Shortcut') {
             # A shortcut's extensions must be either '.lnk' or '.url'
-            if ((-not ("$Link".EndsWith('.lnk'))) -and (-not ("$Link".EndsWith('.url')))) {
+            if ((-not ("$Destination".EndsWith('.lnk'))) -and (-not ("$Destination".EndsWith('.url')))) {
                 throw "The shortcut pathname must end with '.lnk' or '.url'."
             }
-            if ($PSCmdlet.ShouldProcess($Link, 'Create Shortcut')) {
+            if ($PSCmdlet.ShouldProcess($Destination, 'Create Shortcut')) {
                 # Get the full path of $Source
                 $SourcePathInfo = Resolve-Path -Path "$Source"
                 $SourceFullPath = $(Get-Item -Path "$SourcePathInfo").FullName
@@ -57,14 +57,14 @@ function New-Link {
 
                 # Create the shortcut to $SourceFullPath
                 $WshShell = New-Object -comObject WScript.Shell
-                $Shortcut = $WshShell.CreateShortcut("$Link")
+                $Shortcut = $WshShell.CreateShortcut("$Destination")
                 $Shortcut.TargetPath = "$SourceFullPath"
                 $Shortcut.Save()
             }
         } else {
-            if ($PSCmdlet.ShouldProcess($Link, 'Create Link')) {
+            if ($PSCmdlet.ShouldProcess($Destination, 'Create Link')) {
                 # Starting with version 5.0, PoSH has native symlink support
-                New-Item -Path "$Link" -ItemType $Type -Value "$Source"
+                New-Item -Path "$Destination" -ItemType $Type -Value "$Source"
             }
         }
     }
